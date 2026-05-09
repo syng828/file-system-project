@@ -1,15 +1,17 @@
 #ifndef FILE_MANAGER_H
 #define FILE_MANAGER_H
 
-// Main file operation functions
+// File operation functions
 void createFile();
+void openFile();
+void closeFile();
 void writeToFile();
 void readFile();
 void listFiles();
 void showFileDetails();
 void deleteFile();
 
-// Search function
+// Search function (in search.c)
 void searchFile();
 
 #endif
