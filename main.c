@@ -128,23 +128,73 @@ void readFile() {
     printf("File '%s' not found.\n", name);
 }
 
-// Searches for a file by name
+// Searches for a file by name or by content keyword
 void searchFile() {
-    char name[100];
+    int mode;
 
-    printf("Enter file name to search: ");
-    scanf("%s", name);
+    printf("Search by:\n");
+    printf("  1. File name\n");
+    printf("  2. Content keyword\n");
+    printf("Enter choice: ");
+    scanf("%d", &mode);
 
-    /*
-       strcmp() compares the user input with each file name.
-    */
-    for (int i = 0; i < fileCount; i++) {
-        if (strcmp(files[i].name, name) == 0) {
-            printf("File '%s' found. Status: %s\n", name, files[i].isOpen ? "Open" : "Closed");
+    if (mode == 1) {
+        char name[100];
+        printf("Enter file name to search: ");
+        scanf("%s", name);
+
+        /*
+           strcmp() compares the user input with each file name.
+        */
+        for (int i = 0; i < fileCount; i++) {
+            if (strcmp(files[i].name, name) == 0) {
+                printf("File '%s' found. Status: %s\n", name, files[i].isOpen ? "Open" : "Closed");
+                return;
+            }
+        }
+        printf("File '%s' not found.\n", name);
+
+    } else if (mode == 2) {
+        char keyword[200];
+        printf("Enter keyword to search inside files: ");
+        getchar(); // clear leftover newline from scanf
+        fgets(keyword, sizeof(keyword), stdin);
+
+        // Strip trailing newline from fgets
+        size_t klen = strlen(keyword);
+        if (klen > 0 && keyword[klen - 1] == '\n') {
+            keyword[klen - 1] = '\0';
+            klen--;
+        }
+
+        if (klen == 0) {
+            printf("Keyword cannot be empty.\n");
             return;
         }
+
+        int matches = 0;
+        printf("\nFiles containing \"%s\":\n", keyword);
+
+        /*
+           strstr() scans each file's content for the keyword.
+           Returns NULL if the keyword is not found.
+        */
+        for (int i = 0; i < fileCount; i++) {
+            if (strstr(files[i].content, keyword) != NULL) {
+                printf("  - %s [%s]\n", files[i].name, files[i].isOpen ? "Open" : "Closed");
+                matches++;
+            }
+        }
+
+        if (matches == 0) {
+            printf("  No files found containing \"%s\".\n", keyword);
+        } else {
+            printf("Found %d file(s) matching the keyword.\n", matches);
+        }
+
+    } else {
+        printf("Invalid choice.\n");
     }
-    printf("File '%s' not found.\n", name);
 }
 
 // Lists all files in the system
